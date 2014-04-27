@@ -1,0 +1,12 @@
+"My simple grammar" {
+
+ab = a b.
+a = "a".
+b = "b".
+
+object_type = 'argument' | 'commit' | 'proposition' | 'tag'.
+
+proposition = 'proposition' proposition_text.
+proposition_text = { character }.
+
+} "Not too bad!"

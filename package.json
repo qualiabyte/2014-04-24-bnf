@@ -1,0 +1,15 @@
+{
+  "name": "apr-24-parser",
+  "version": "0.0.0",
+  "description": "Playing with BNF grammars!",
+  "main": "demo.js",
+  "scripts": {
+    "test": "make test"
+  },
+  "author": "Tyler Florez (@qualiabyte)",
+  "license": "MIT",
+  "dependencies": {
+    "ebnf-diagram": "~0.1.0",
+    "abnf": "0.0.5"
+  }
+}

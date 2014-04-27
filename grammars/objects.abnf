@@ -1,0 +1,88 @@
+
+; PRIMITIVES
+
+sha1   = 40( hex )                    ; SHA-1 hash
+utf8   = %x0000-10FFFF                ; UTF-8 character
+non-lf = %x0000-0009 / %x000b-10FFFF  ; Non-linefeed
+
+; Lowercase all the things!
+hex    = "0" / "1" / "2" / "3" / "4" / "5" / "6" / "7"
+       / "8" / "9" / "a" / "b" / "c" / "d" / "e" / "f"
+
+; ISO-8601 Date
+iso-date = 2(DIGIT) "-" 2(DIGIT) "-" 2(DIGIT) "T"  ; YY-MM-DDT
+           2(DIGIT) ":" 2(DIGIT) ":" 2(DIGIT) "Z"  ; hh:mm:ssZ
+
+; ARGUMENTA
+
+hostname = 1*255( utf8 )
+username = 1*20( utf8 )
+
+; ARGUMENTA OBJECTS
+
+object      = argument / commit / proposition / tag
+object-type = "argument" / "commit" / "proposition" / "tag"
+
+; ARGUMENTS
+
+argument            = argument-header argument-body
+argument-header     = "argument" LF LF
+argument-body       = argument-title argument-premises argument-conclusion
+argument-title      = 1*100( non-lf )
+argument-premises   = *( argument-premise )
+argument-premise    = "premise"    SP sha1 LF
+argument-conclusion = "conclusion" SP sha1 LF
+
+; COMMITS
+
+commit         = commit-header commit-body
+commit-header  = "commit" LF LF
+
+commit-body    = commit-entry-target
+                 commit-entry-parents
+                 commit-entry-committer
+                 commit-entry-date
+               [ commit-entry-host ]
+
+commit-entry-target    = object-type   SP sha1     LF
+commit-entry-parents   = *( commit-entry-parent )
+commit-entry-parent    = "parent"      SP sha1     LF
+commit-entry-committer = "committer"   SP username LF
+commit-entry-date      = "commit_date" SP iso-date LF
+commit-entry-host      = "host"        SP hostname LF
+
+; PROPOSITIONS
+
+proposition      = "proposition" SP proposition-text
+proposition-text = 1*240( utf8 )
+
+; TAGS
+
+tag        = tag-header tag-body
+tag-header = "tag" LF LF
+
+tag-body   = tag-body-support
+           / tag-body-dispute
+           / tag-body-citation
+
+tag-body-support = tag-entry-support
+                   tag-entry-target
+                   tag-entry-source
+
+tag-body-dispute = tag-entry-dispute
+                   tag-entry-target
+                   tag-entry-source
+
+tag-body-citation = tag-entry-citation
+                    tag-entry-target
+                    tag-entry-citation-text
+
+tag-type                = "support" / "dispute" / "citation"
+tag-entry-support       = "tag_type" SP "support" LF
+tag-entry-dispute       = "tag_type" SP "dispute" LF
+tag-entry-citation      = "tag_type" SP "citation" LF
+tag-entry-target        = "target" SP object-type SP sha1 LF
+tag-entry-source        = "source" SP object-type SP sha1 LF
+tag-entry-citation-text = "citation_text" SP citation-text LF
+
+citation-text = 1*240( utf-8 )
