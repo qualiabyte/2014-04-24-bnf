@@ -14,7 +14,12 @@ var renderGrammars = function() {
     var title = 'My ' + type + ' grammar.';
     var comment = "Pretty neat!";
     var input = '"' + title + '" {\n' + grammar + '\n}"' + comment + '"';
-    diagram.fromText(input, './build/' + type + '.png', 2000, 4000);
+    var matches = grammar.match(/\n+/g) || [];
+    var lines = matches.length || 1;
+    var w = 1600;
+    var h = Math.max(1200, lines*100);
+    var outfile = './build/' + type + '.png';
+    diagram.fromText(input, outfile, w, h);
   }
 };
 
