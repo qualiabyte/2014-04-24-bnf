@@ -1,0 +1,72 @@
+
+hex    = "[0-9a-f]".
+sha1   = { hex }.
+utf8   = character.
+nonLF  = "[^\n]".
+nonSP  = "[^ ]".
+DIGIT  = "[0-9]".
+
+isoDate = "\d\d" "-" "\d\d" "-" "\d\d" "T"
+          "\d\d" ":" "\d\d" ":" "\d\d" "Z".
+
+hostname = { nonSP }.
+username = { nonSP }.
+
+object     = argument | commit | proposition | tag.
+objectType = "argument" | "commit" | "proposition" | "tag".
+
+argument           = argumentHeader argumentBody.
+argumentHeader     = "argument" LF LF.
+argumentBody       = argumentTitle argumentPremises argumentConclusion.
+argumentTitle      = { nonLF }.
+argumentPremises   = { argumentPremise }.
+argumentPremise    = "premise"    SP sha1 LF.
+argumentConclusion = "conclusion" SP sha1 LF.
+
+commit        = commitHeader commitBody.
+commitHeader  = "commit" LF LF.
+
+commitBody    = commitEntryTarget
+                commitEntryParents
+                commitEntryCommitter
+                commitEntryDate
+              [ commitEntryHost ].
+
+commitEntryTarget    = objectType    SP sha1     LF.
+commitEntryParents   = { commitEntryParent }.
+commitEntryParent    = "parent"      SP sha1     LF.
+commitEntryCommitter = "committer"   SP username LF.
+commitEntryDate      = "commit_date" SP isoDate  LF.
+commitEntryHost      = "host"        SP hostname LF.
+
+proposition     = "proposition" SP propositionText.
+propositionText = { utf8 }.
+
+tag       = tagHeader tagBody.
+tagHeader = "tag" LF LF.
+
+tagBody   = tagBodySupport
+          | tagBodyDispute
+          | tagBodyCitation.
+
+tagBodySupport = tagEntrySupport
+                 tagEntryTarget
+                 tagEntrySource.
+
+tagBodyDispute = tagEntryDispute
+                 tagEntryTarget
+                 tagEntrySource.
+
+tagBodyCitation = tagEntryCitation
+                  tagEntryTarget
+                  tagEntryCitationText.
+
+tagType              = "support" | "dispute" | "citation".
+tagEntrySupport      = "tag_type" SP "support" LF.
+tagEntryDispute      = "tag_type" SP "dispute" LF.
+tagEntryCitation     = "tag_type" SP "citation" LF.
+tagEntryTarget       = "target" SP objectType SP sha1 LF.
+tagEntrySource       = "source" SP objectType SP sha1 LF.
+tagEntryCitationText = "citation_text" SP citationText LF.
+
+citationText = { utf8 }.
