@@ -1,5 +1,5 @@
 {
-  "name": "apr-24-parser",
+  "name": "apr-24-bnf",
   "version": "0.0.0",
   "description": "Playing with BNF grammars!",
   "main": "demo.js",
