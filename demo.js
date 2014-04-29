@@ -4,7 +4,7 @@ var exec = require('child_process').exec;
 
 var grammars = {
   literal: 'a = "a".'
-, simple: fs.readFileSync('./grammars/simple.grammar', 'utf8')
+, simple: fs.readFileSync('./grammars/simple.ebnf', 'utf8')
 , objects: fs.readFileSync('./grammars/objects.ebnf', 'utf8')
 };
 
